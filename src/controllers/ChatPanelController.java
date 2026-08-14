@@ -10,6 +10,7 @@ import views.MainFrameView;
 import views.chat.ChatPanelView;
 import views.chat.SidePanelView;
 
+import javax.swing.JOptionPane;
 import java.util.List;
 
 public class ChatPanelController {
@@ -29,36 +30,71 @@ public class ChatPanelController {
     }
 
     private void initAddChatButton() {
-        sidePanel.getAddChatButton().addActionListener(e -> {
-            if (sidePanel.getSearchField().getText().isEmpty()) {
-                return;
+        sidePanel.getAddChatButton().addActionListener(e -> handleAddChat());
+    }
+
+    /**
+     * Legt einen Chat mit dem im Suchfeld eingetragenen Benutzer an.
+     * Jede Eingabe wird vorher geprueft, damit kein unbekannter Benutzer
+     * an den ChatService weitergereicht wird.
+     */
+    private void handleAddChat() {
+        String partnerName = sidePanel.getSearchField().getText().trim();
+
+        if (partnerName.isEmpty()) {
+            showError("Bitte gib einen Benutzernamen ein.");
+            return;
+        }
+
+        AccountModel currentAccount = SessionHandler.getInstance().getCurrentAccount();
+
+        if (partnerName.equalsIgnoreCase(currentAccount.getUsername())) {
+            showError("Du kannst keinen Chat mit dir selbst starten.");
+            return;
+        }
+
+        AccountModel partner = UserService.getAccountByUserName(partnerName);
+
+        if (partner == null) {
+            showError("Der Benutzer \"" + partnerName + "\" existiert nicht.");
+            return;
+        }
+
+        if (isContactInList(partner.getUsername())) {
+            showError("Mit \"" + partner.getUsername() + "\" besteht bereits ein Chat.");
+            sidePanel.getSearchField().setText("");
+            return;
+        }
+
+        // createChat liefert false, wenn bereits eine Chatdatei existiert.
+        // Der bestehende Verlauf bleibt dann erhalten und wird nur nachgeladen.
+        ChatService.createChat(currentAccount, partner);
+
+        if (ChatService.findChat(currentAccount, partner) == null) {
+            showError("Der Chat konnte nicht gespeichert werden.");
+            return;
+        }
+
+        sidePanel.getContactListModel().addElement(partner.getUsername());
+        updateStatusLabel();
+        sidePanel.getSearchField().setText("");
+    }
+
+    private boolean isContactInList(String username) {
+        for (int i = 0; i < sidePanel.getContactListModel().getSize(); i++) {
+            if (sidePanel.getContactListModel().get(i).equalsIgnoreCase(username)) {
+                return true;
             }
+        }
+        return false;
+    }
 
-            String chatter1 = SessionHandler.getInstance().getCurrentAccount().getUsername();
-            String chatter2 = sidePanel.getSearchField().getText();
+    private void updateStatusLabel() {
+        sidePanel.getStatusLabel().setText(sidePanel.getContactListModel().getSize() + " Chats");
+    }
 
-            ChatService.createChat(UserService.getAccountByUserName(chatter1),
-                    UserService.getAccountByUserName(chatter2));
-
-            ChatModel chat = ChatService.findChat(UserService.getAccountByUserName(chatter1),
-                    UserService.getAccountByUserName(chatter2));
-
-            if (chat != null) {
-                sidePanel.getContactListModel().addElement(chatter2);
-
-                int count = sidePanel.getContactListModel().getSize();
-                sidePanel.getStatusLabel().setText(count + " Chats");
-
-                sidePanel.getSearchField().setText("");
-            } else {
-                javax.swing.JOptionPane.showMessageDialog(
-                        mainFrameView,
-                        "Chat konnte nicht erstellt werden. Existiert der Benutzer \"" + chatter2 + "\"?",
-                        "Fehler",
-                        javax.swing.JOptionPane.ERROR_MESSAGE
-                );
-            }
-        });
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(mainFrameView, message, "Fehler", JOptionPane.ERROR_MESSAGE);
     }
 
     private void initContactSelection() {
@@ -108,7 +144,10 @@ public class ChatPanelController {
             AccountModel sender = UserService.getAccountByUserName(me);
             AccountModel receiver = UserService.getAccountByUserName(currentPartner);
 
-            ChatService.sendMessage(sender, receiver, text);
+            if (!ChatService.sendMessage(sender, receiver, text)) {
+                showError("Die Nachricht konnte nicht gesendet werden.");
+                return;
+            }
 
             chatPanel.getMessageField().setText("");
             loadMessages(currentPartner);
@@ -135,7 +174,6 @@ public class ChatPanelController {
             sidePanel.getContactListModel().addElement(partner);
         }
 
-        int count = sidePanel.getContactListModel().getSize();
-        sidePanel.getStatusLabel().setText(count + " Chats");
+        updateStatusLabel();
     }
 }

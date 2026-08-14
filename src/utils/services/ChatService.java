@@ -14,11 +14,28 @@ import java.util.List;
 public class ChatService {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting()
-                                                        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                                                        .create();
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
     private static final String FILE_SUFFIX = "-chat.json";
 
-    public static void createChat(AccountModel chatter1, AccountModel chatter2){
+    /**
+     * Legt einen neuen Chat zwischen zwei Benutzern an.
+     * Existiert bereits ein Chat, bleibt dieser unveraendert erhalten.
+     *
+     * @return true, wenn ein neuer Chat angelegt wurde; false, wenn bereits einer bestand
+     *         oder einer der Benutzer nicht uebergeben wurde
+     */
+    public static boolean createChat(AccountModel chatter1, AccountModel chatter2) {
+        if (chatter1 == null || chatter2 == null) {
+            return false;
+        }
+
+        // Ein bestehender Chat darf nicht ueberschrieben werden, sonst geht der
+        // gesamte bisherige Nachrichtenverlauf verloren.
+        if (findChat(chatter1, chatter2) != null) {
+            return false;
+        }
+
         // Ein Chat wird immer in derselben JSON-Datei gespeichert, damit zwischen denselben
         // Nutzern keine Duplikate entstehen.
         String fileName = getSortedUserHash(chatter1, chatter2) + FILE_SUFFIX;
@@ -26,6 +43,8 @@ public class ChatService {
 
         String json = GSON.toJson(chatModel);
         FileHandlerService.writeFile(fileName, json);
+
+        return true;
     }
 
     private static String getSortedUserHash(AccountModel chatter1, AccountModel chatter2)
@@ -41,6 +60,12 @@ public class ChatService {
 
     public static ChatModel findChat(AccountModel chatter1, AccountModel chatter2)
     {
+        // Ohne diese Pruefung wuerde getSortedUserHash bei einem unbekannten
+        // Benutzer eine NullPointerException werfen.
+        if (chatter1 == null || chatter2 == null) {
+            return null;
+        }
+
         String json = FileHandlerService.readFile(ChatService.getSortedUserHash(chatter1, chatter2) + FILE_SUFFIX);
 
         if (json == null || json.isBlank()) {
@@ -50,10 +75,19 @@ public class ChatService {
         return GSON.fromJson(json, ChatModel.class);
     }
 
-    public static void sendMessage(AccountModel sender, AccountModel receiver, String content) {
+    /**
+     * Haengt eine Nachricht an einen bestehenden Chat an und speichert diesen.
+     *
+     * @return true, wenn die Nachricht gespeichert wurde
+     */
+    public static boolean sendMessage(AccountModel sender, AccountModel receiver, String content) {
+        if (sender == null || receiver == null || content == null || content.isBlank()) {
+            return false;
+        }
+
         ChatModel chat = findChat(sender, receiver);
         if (chat == null) {
-            return;
+            return false;
         }
 
         // Neue Nachrichten werden an den vorhandenen Chat angehängt und anschließend persistiert.
@@ -63,6 +97,8 @@ public class ChatService {
         String fileName = getSortedUserHash(sender, receiver) + FILE_SUFFIX;
         String json = GSON.toJson(chat);
         FileHandlerService.writeFile(fileName, json);
+
+        return true;
     }
 
     public static List<ChatModel> getChatsForUser(AccountModel account) {
