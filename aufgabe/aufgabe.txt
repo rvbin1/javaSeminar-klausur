@@ -1,1 +1,0 @@
-Einfache Chat-Anwendung (lokal) Beschreibung: Simuliert einen Chat zwischen zwei Benutzern auf demselben Rechner.  Zwei Textfelder für Eingabe.  Nachrichtenanzeige in JTextArea.  Buttons „Senden“ für beide Seiten.  Speicherung des Chatverlaufs in Datei. Beispiel-Interaktion: Benutzer A tippt „Hallo!“, klickt auf „Senden“. Nachricht erscheint im Chatfenster.

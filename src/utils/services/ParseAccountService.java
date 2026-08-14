@@ -21,7 +21,7 @@ public class ParseAccountService {
             return new ArrayList<>();
         }
 
-        // Wegen Java's Type Erasure kennt Gson zur Laufzeit nicht "ArrayList<AccountModel>.class".
+        // Gson kennt zur Laufzeit nicht "ArrayList<AccountModel>.class".
         // TypeToken haelt diese generische Typinformation ueber eine anonyme Unterklasse fest,
         // damit Gson die JSON-Liste in die richtigen AccountModel-Objekte umwandeln kann.
         Type listType = new TypeToken<ArrayList<AccountModel>>(){}.getType();

@@ -26,7 +26,7 @@ public class ChatPanelController {
     private final ChatPanelView chatPanel;
 
     /**
-     * Prueft zyklisch, ob der Gespraechspartner neue Nachrichten geschrieben hat.
+     * Prueft ob der Gespraechspartner neue Nachrichten geschrieben hat.
      * Ohne diesen Timer wuerde ein Benutzer fremde Nachrichten erst sehen,
      * wenn er selbst etwas sendet.
      */
@@ -256,9 +256,6 @@ public class ChatPanelController {
         chatPanel.getMessageField().addActionListener(e -> send.run());
     }
 
-    /**
-     * Baut die Kontaktliste nach dem Login neu auf und startet die Aktualisierung.
-     */
     public void loadContacts() {
         sidePanel.getContactListModel().clear();
         refreshContacts();

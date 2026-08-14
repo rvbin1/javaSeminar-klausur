@@ -29,25 +29,9 @@ Eine kleine Java-Swing-Anwendung für lokale Benutzerregistrierung, Login und Di
 - `SessionHandler` hält den aktuell angemeldeten Benutzer im Speicher (Singleton, gültig für die laufende Anwendung).
 - `ChatPanelController` pollt per `javax.swing.Timer` alle 2 Sekunden neue Kontakte/Nachrichten, damit ein zweiter, lokal angemeldeter Benutzer neue Nachrichten sieht, ohne selbst aktiv etwas zu senden.
 
-## Ausführen
+## Voraussetzung
 
-Voraussetzung: Java JDK 17 oder höher sowie die mitgelieferte Gson-Bibliothek (`deps/gson-2.11.0.jar`).
-
-### Windows (PowerShell)
-
-```powershell
-$files = Get-ChildItem -Recurse -Filter *.java
-javac -cp "deps\gson-2.11.0.jar" -d out ($files | ForEach-Object { $_.FullName })
-java -cp "out;deps\gson-2.11.0.jar" Main
-```
-
-### Linux / macOS (bash)
-
-```bash
-files=$(find src -name "*.java")
-javac -cp "deps/gson-2.11.0.jar" -d out $files
-java -cp "out:deps/gson-2.11.0.jar" Main
-```
+Java JDK 17 oder höher sowie die mitgelieferte Gson-Bibliothek (`deps/gson-2.11.0.jar`).
 
 Beim ersten Start werden die benötigten JSON-Dateien automatisch erzeugt bzw. beim Registrieren/Chatten ergänzt.
 
@@ -68,6 +52,3 @@ Da es sich um einen **lokalen** Chat handelt, lässt sich das Zwei-Personen-Szen
 5. **Empfangen:** Innerhalb von 2 Sekunden erscheint `bob` automatisch in Bobs Kontaktliste (falls er dort noch nicht stand). Öffnet Bob den Chat mit `alice`, sieht er dieselbe Nachricht und kann direkt antworten, z. B. `Hallo Alice, alles klar?`.
 6. **Persistenz prüfen:** Nach Beenden beider Fenster bleibt der Verlauf in der `*-chat.json`-Datei erhalten und wird beim nächsten Login wieder geladen.
 
-## Hinweis
-
-Die App ist bewusst leichtgewichtig und ohne Datenbank aufgebaut. Für Produktionsfälle wäre eine echte Datenbank sowie zusätzliche Sicherheitsmaßnahmen (z. B. gesalzenes Passwort-Hashing statt reinem SHA-256) sinnvoll. Die im Projektordner erzeugten Dateien (`accounts.json`, `*-chat.json`) enthalten reale Nutzungsdaten der jeweiligen lokalen Ausführung und sollten bei Weitergabe des Projekts nicht versehentlich mit veröffentlicht werden.

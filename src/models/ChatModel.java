@@ -42,7 +42,7 @@ public class ChatModel {
     }
 
     public List<ChatMessageModel> getMessages() {
-        // Defensive Kopie: der Aufrufer darf die zurueckgegebene Liste veraendern,
+        // der Aufrufer darf die zurueckgegebene Liste veraendern,
         // ohne dass sich das auf den internen Zustand von ChatModel auswirkt.
         return new ArrayList<>(messages);
     }

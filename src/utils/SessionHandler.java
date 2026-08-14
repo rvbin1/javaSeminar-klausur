@@ -3,7 +3,6 @@ package utils;
 import models.AccountModel;
 
 // Singleton, da pro laufender App-Instanz immer nur ein Benutzer eingeloggt ist
-// (fuer zwei Chatpartner werden zwei separate Prozesse gestartet, siehe README).
 public class SessionHandler {
     private static SessionHandler instance;
     private AccountModel currentAccount;
