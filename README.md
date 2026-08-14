@@ -27,20 +27,9 @@ Eine kleine Java-Swing-Anwendung für lokale Benutzerregistrierung, Login und Di
 - `FileHandlerService` liest und schreibt die JSON-Daten auf der Festplatte.
 - `SessionService` hält den aktuell angemeldeten Benutzer im Speicher.
 
-## Ausführen
+## Voraussetzung
 
-Voraussetzung: Java JDK 17 oder höher.
-
-1. Im Projektverzeichnis kompilieren (inklusive der benötigten Gson-Bibliothek):
-   ```powershell
-   $files = Get-ChildItem -Recurse -Filter *.java
-   javac -cp "deps\gson-2.11.0.jar" -d out ($files | ForEach-Object { $_.FullName })
-   ```
-2. Anwendung starten:
-   ```powershell
-   java -cp "out;deps\gson-2.11.0.jar" Main
-   ```
-
+Java JDK 17 oder höher und GSON 2.11.0
 Beim ersten Start werden ggf. die benötigten JSON-Dateien automatisch erzeugt bzw. beim Login/Chatten ergänzt.
 
 ## Hinweis

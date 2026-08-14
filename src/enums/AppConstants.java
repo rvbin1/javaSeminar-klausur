@@ -8,5 +8,6 @@ public class AppConstants {
 
     public static final String ACCOUNT_FILE = "accounts.json";
     public static final String ALGORITHM = "SHA-256";
+    public static final int CHAT_REFRESH_INTERVAL_MS = 2000;
 
 }

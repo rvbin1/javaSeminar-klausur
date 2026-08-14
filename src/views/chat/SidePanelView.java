@@ -8,6 +8,7 @@ public class SidePanelView extends JPanel {
     private final JList<String> chatList;
     private final DefaultListModel<String> contactListModel = new DefaultListModel<>();
     private final JButton addChatButton;
+    private final JButton logoutButton;
     private final JLabel statusLabel;
     private final JTextField searchField;
 
@@ -67,6 +68,14 @@ public class SidePanelView extends JPanel {
         buttonPanel.add(addChatButton);
         actionPanel.add(buttonPanel);
 
+        // Eigene Zeile, damit der Button im schmalen Seitenpanel nicht umbricht.
+        JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        logoutPanel.setOpaque(false);
+        logoutButton = new JButton("Abmelden");
+        logoutButton.setName("logoutButton");
+        logoutPanel.add(logoutButton);
+        actionPanel.add(logoutPanel);
+
         bottomPanel.add(actionPanel, BorderLayout.CENTER);
 
         add(bottomPanel, BorderLayout.SOUTH);
@@ -82,6 +91,10 @@ public class SidePanelView extends JPanel {
 
     public JButton getAddChatButton() {
         return addChatButton;
+    }
+
+    public JButton getLogoutButton() {
+        return logoutButton;
     }
 
     public JLabel getStatusLabel() {

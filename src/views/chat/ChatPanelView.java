@@ -5,6 +5,9 @@ import java.awt.*;
 
 public class ChatPanelView extends JPanel {
 
+    /** Beschriftung, solange kein Chat geoeffnet ist. */
+    public static final String DEFAULT_CONTACT_LABEL = "Wählen Sie einen Kontakt aus";
+
     private final JLabel contactLabel;
     private final JTextArea chatArea;
     private final JTextField messageField;
@@ -16,7 +19,7 @@ public class ChatPanelView extends JPanel {
 
         JPanel topPanel = new JPanel();
         topPanel.setBackground(new Color(33, 150, 243));
-        contactLabel = new JLabel("Wählen Sie einen Kontakt aus");
+        contactLabel = new JLabel(DEFAULT_CONTACT_LABEL);
         contactLabel.setName("contactLabel");
         contactLabel.setForeground(Color.WHITE);
         contactLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
