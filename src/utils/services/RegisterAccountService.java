@@ -21,7 +21,7 @@ public class RegisterAccountService {
         return password == null || password.length() < MIN_PASSWORD_LENGTH;
     }
 
-    public static void createAccount(String userName, String password) {
+    public static AccountModel createAccount(String userName, String password) {
         AccountModel account = new AccountModel(userName, password);
 
         ArrayList<AccountModel> accounts = ParseAccountService.parseAllAccounts();
@@ -29,5 +29,7 @@ public class RegisterAccountService {
 
         String json = GSON.toJson(accounts);
         FileHandlerService.writeFile(AppConstants.ACCOUNT_FILE, json);
+
+        return account;
     }
 }

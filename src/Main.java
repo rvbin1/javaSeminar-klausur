@@ -12,7 +12,7 @@ public class Main {
             MainFrameView mainFrameView = new MainFrameView();
             ChatPanelController chatPanelController = new ChatPanelController(mainFrameView);
             LoginController loginController = new LoginController(mainFrameView, chatPanelController);
-            RegistrationController registrationController = new RegistrationController(mainFrameView);
+            RegistrationController registrationController = new RegistrationController(mainFrameView, chatPanelController);
         });
     }
 }
