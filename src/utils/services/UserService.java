@@ -5,6 +5,7 @@ import models.AccountModel;
 import java.util.ArrayList;
 
 public class UserService {
+
     public static AccountModel getAccountByUserName(String userName)
     {
         ArrayList<AccountModel> accounts = ParseAccountService.parseAllAccounts();

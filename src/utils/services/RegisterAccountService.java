@@ -32,4 +32,8 @@ public class RegisterAccountService {
 
         return account;
     }
+
+    public static boolean isUsernameEmpty(String userName) {
+        return userName == null || userName.trim().isEmpty();
+    }
 }

@@ -8,11 +8,9 @@ import views.login.RegistrationPanelView;
 
 public class RegistrationController {
     private final MainFrameView mainFrameView;
-    private final ChatPanelController chatPanelController;
 
     public RegistrationController(MainFrameView mainFrameView, ChatPanelController chatPanelController) {
         this.mainFrameView = mainFrameView;
-        this.chatPanelController = chatPanelController;
 
         getMainFrameView().getRegistrationPanelView().getRegisterButton()
                 .addActionListener(e -> {
@@ -20,6 +18,16 @@ public class RegistrationController {
 
                     String userName = rgv.getUsernameField().getText();
                     String password = new String(rgv.getPasswordField().getPassword());
+
+                    if (RegisterAccountService.isUsernameEmpty(userName)) {
+                        javax.swing.JOptionPane.showMessageDialog(
+                                getMainFrameView(),
+                                "Bitte gib einen Benutzernamen ein.",
+                                "Fehler",
+                                javax.swing.JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
 
                     if (RegisterAccountService.isUsernameTaken(userName)) {
                         javax.swing.JOptionPane.showMessageDialog(
