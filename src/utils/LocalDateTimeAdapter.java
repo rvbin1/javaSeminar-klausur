@@ -6,6 +6,11 @@ import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Gson kann LocalDateTime nicht "out of the box" (de-)serialisieren, da die Klasse
+ * kein Standard-Java-Bean ist. Dieser Adapter wandelt sie stattdessen manuell in einen
+ * ISO-8601-String um und wird beim Erzeugen des Gson-Objekts in ChatService registriert.
+ */
 public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;

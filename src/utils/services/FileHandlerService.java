@@ -41,6 +41,8 @@ public class FileHandlerService {
         List<String> result = new ArrayList<>();
         Path dir = Path.of(".");
 
+        // "*" + suffix ist ein Glob-Pattern (kein regulaerer Ausdruck): es liefert nur Dateien,
+        // deren Name auf den uebergebenen Suffix endet, z. B. alle "*-chat.json"-Dateien.
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "*" + suffix)) {
             for (Path path : stream) {
                 result.add(path.getFileName().toString());

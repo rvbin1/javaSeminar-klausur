@@ -6,6 +6,8 @@ import utils.services.RegisterAccountService;
 import views.MainFrameView;
 import views.login.RegistrationPanelView;
 
+import javax.swing.JOptionPane;
+
 public class RegistrationController {
     private final MainFrameView mainFrameView;
 
@@ -17,35 +19,22 @@ public class RegistrationController {
                     RegistrationPanelView rgv = getMainFrameView().getRegistrationPanelView();
 
                     String userName = rgv.getUsernameField().getText();
+                    // JPasswordField liefert bewusst ein char[] statt String (Strings sind
+                    // unveraenderlich und bleiben laenger im Speicher) - wird hier direkt weiterverwendet.
                     String password = new String(rgv.getPasswordField().getPassword());
 
                     if (RegisterAccountService.isUsernameEmpty(userName)) {
-                        javax.swing.JOptionPane.showMessageDialog(
-                                getMainFrameView(),
-                                "Bitte gib einen Benutzernamen ein.",
-                                "Fehler",
-                                javax.swing.JOptionPane.ERROR_MESSAGE
-                        );
+                        showError("Bitte gib einen Benutzernamen ein.");
                         return;
                     }
 
                     if (RegisterAccountService.isUsernameTaken(userName)) {
-                        javax.swing.JOptionPane.showMessageDialog(
-                                getMainFrameView(),
-                                "Der Benutzername \"" + userName + "\" ist bereits vergeben.",
-                                "Fehler",
-                                javax.swing.JOptionPane.ERROR_MESSAGE
-                        );
+                        showError("Der Benutzername \"" + userName + "\" ist bereits vergeben.");
                         return;
                     }
 
                     if (RegisterAccountService.isPasswordTooShort(password)) {
-                        javax.swing.JOptionPane.showMessageDialog(
-                                getMainFrameView(),
-                                "Das Passwort muss mindestens 5 Zeichen lang sein.",
-                                "Fehler",
-                                javax.swing.JOptionPane.ERROR_MESSAGE
-                        );
+                        showError("Das Passwort muss mindestens 5 Zeichen lang sein.");
                         return;
                     }
 
@@ -60,6 +49,10 @@ public class RegistrationController {
                 .addActionListener(e -> {
                     getMainFrameView().showLoginPanelView();
                 });
+    }
+
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(mainFrameView, message, "Fehler", JOptionPane.ERROR_MESSAGE);
     }
 
     public MainFrameView getMainFrameView() {

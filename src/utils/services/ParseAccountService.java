@@ -2,6 +2,7 @@ package utils.services;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import enums.AppConstants;
 import models.AccountModel;
@@ -20,8 +21,20 @@ public class ParseAccountService {
             return new ArrayList<>();
         }
 
+        // Wegen Java's Type Erasure kennt Gson zur Laufzeit nicht "ArrayList<AccountModel>.class".
+        // TypeToken haelt diese generische Typinformation ueber eine anonyme Unterklasse fest,
+        // damit Gson die JSON-Liste in die richtigen AccountModel-Objekte umwandeln kann.
         Type listType = new TypeToken<ArrayList<AccountModel>>(){}.getType();
-        ArrayList<AccountModel> accounts = GSON.fromJson(json, listType);
+
+        // Ist accounts.json beschaedigt oder von Hand fehlerhaft bearbeitet worden,
+        // soll die App mit einer leeren Benutzerliste weiterlaufen statt abzustuerzen.
+        ArrayList<AccountModel> accounts;
+        try {
+            accounts = GSON.fromJson(json, listType);
+        } catch (JsonSyntaxException e) {
+            System.err.println("Fehler beim Lesen von " + AppConstants.ACCOUNT_FILE + ": " + e.getMessage());
+            return new ArrayList<>();
+        }
 
         return accounts != null ? accounts : new ArrayList<>();
     }

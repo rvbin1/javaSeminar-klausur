@@ -47,6 +47,8 @@ public class SidePanelView extends JPanel {
 
         searchField = new JTextField();
         searchField.setName("searchField");
+        // setMaximumSize wirkt nur, weil actionPanel ein BoxLayout nutzt - andere Layouts
+        // wuerden diesen Wert ignorieren. Ohne die Begrenzung wuerde das Feld unnoetig hoch gezogen.
         searchField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
         searchField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(200, 200, 200)),

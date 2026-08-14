@@ -7,6 +7,8 @@ import utils.services.LoginAccountService.LoginResult;
 import utils.SessionHandler;
 import views.MainFrameView;
 
+import javax.swing.JOptionPane;
+
 public class LoginController {
     private final MainFrameView mainFrameView;
 
@@ -20,6 +22,8 @@ public class LoginController {
 
         getMainFrameView().getLoginPanelView().getLoginButton()
                 .addActionListener(e -> {
+                    // JPasswordField liefert bewusst ein char[] statt String (Strings sind
+                    // unveraenderlich und bleiben laenger im Speicher) - wird hier direkt weiterverwendet.
                     char[] passwordChars = getMainFrameView().getLoginPanelView().getPasswordField().getPassword();
 
                     String userName = getMainFrameView().getLoginPanelView().getUsernameField().getText();
@@ -28,22 +32,12 @@ public class LoginController {
                     LoginResult result = LoginAccountService.checkLogin(userName, password);
 
                     if (result.getStatus() == LoginStatus.USER_NOT_FOUND) {
-                        javax.swing.JOptionPane.showMessageDialog(
-                                getMainFrameView(),
-                                "Der Benutzername \"" + userName + "\" existiert nicht.",
-                                "Fehler",
-                                javax.swing.JOptionPane.ERROR_MESSAGE
-                        );
+                        showError("Der Benutzername \"" + userName + "\" existiert nicht.");
                         return;
                     }
 
                     if (result.getStatus() == LoginStatus.WRONG_PASSWORD) {
-                        javax.swing.JOptionPane.showMessageDialog(
-                                getMainFrameView(),
-                                "Das Passwort ist falsch.",
-                                "Fehler",
-                                javax.swing.JOptionPane.ERROR_MESSAGE
-                        );
+                        showError("Das Passwort ist falsch.");
                         return;
                     }
 
@@ -52,6 +46,10 @@ public class LoginController {
                     chatPanelController.loadContacts();
                     getMainFrameView().showMainChatView();
                 });
+    }
+
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(mainFrameView, message, "Fehler", JOptionPane.ERROR_MESSAGE);
     }
 
     public MainFrameView getMainFrameView() {

@@ -23,6 +23,8 @@ public class LoginAccountService {
         }
     }
 
+    // Status und Account werden bewusst getrennt zurueckgegeben, damit der Controller
+    // "Benutzer existiert nicht" von "Passwort falsch" unterscheiden und passend anzeigen kann.
     public static LoginResult checkLogin(String userName, String password) {
         AccountModel account = UserService.getAccountByUserName(userName);
 

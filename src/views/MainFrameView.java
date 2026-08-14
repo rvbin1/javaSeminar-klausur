@@ -21,6 +21,9 @@ public class MainFrameView extends JFrame {
         super.setSize(1000, 600);
         super.setLocationRelativeTo(null);
 
+        // CardLayout stapelt alle drei Panels uebereinander im selben Container;
+        // show(...) blendet jeweils nur das Panel mit dem passenden Namen ein.
+        // So bleibt jede View im Speicher (samt Zustand) und muss beim Wechsel nicht neu erzeugt werden.
         mainPanel = new JPanel(new CardLayout());
 
         this.getMainPanel().add(this.getLoginPanelView(), MainFrameViews.LOGIN.name());

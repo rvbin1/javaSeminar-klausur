@@ -8,6 +8,8 @@ public class UserService {
 
     public static AccountModel getAccountByUserName(String userName)
     {
+        // Laedt bei jedem Aufruf die komplette accounts.json neu und sucht linear (kein
+        // Cache/Index) - bei einer kleinen, dateibasierten Nutzerliste bewusst einfach gehalten.
         ArrayList<AccountModel> accounts = ParseAccountService.parseAllAccounts();
 
         for (AccountModel account : accounts) {

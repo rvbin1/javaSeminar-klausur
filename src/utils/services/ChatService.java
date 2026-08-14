@@ -2,6 +2,7 @@ package utils.services;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import models.AccountModel;
 import models.ChatMessageModel;
 import models.ChatModel;
@@ -72,7 +73,14 @@ public class ChatService {
             return null;
         }
 
-        return GSON.fromJson(json, ChatModel.class);
+        // Eine manuell beschaedigte oder unvollstaendige JSON-Datei soll die App nicht
+        // abstuerzen lassen, sondern nur den betroffenen Chat unauffindbar machen.
+        try {
+            return GSON.fromJson(json, ChatModel.class);
+        } catch (JsonSyntaxException e) {
+            System.err.println("Fehler beim Lesen des Chats: " + e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -117,8 +125,19 @@ public class ChatService {
                 continue;
             }
 
-            ChatModel chat = GSON.fromJson(json, ChatModel.class);
-            if (chat == null) continue;
+            ChatModel chat;
+            try {
+                chat = GSON.fromJson(json, ChatModel.class);
+            } catch (JsonSyntaxException e) {
+                // Eine einzelne beschaedigte Chatdatei soll nicht das Laden aller
+                // anderen Chats verhindern, deshalb wird hier nur diese Datei uebersprungen.
+                System.err.println("Fehler beim Lesen von " + fileName + ": " + e.getMessage());
+                continue;
+            }
+
+            if (chat == null || chat.getChatter1() == null || chat.getChatter2() == null) {
+                continue;
+            }
 
             String c1 = chat.getChatter1().getUsername().trim().toLowerCase();
             String c2 = chat.getChatter2().getUsername().trim().toLowerCase();

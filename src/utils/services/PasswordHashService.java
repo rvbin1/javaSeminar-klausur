@@ -9,6 +9,8 @@ public class PasswordHashService {
 
     public static boolean verifyPassword(String password, String hashedPassword)
     {
+        // Hashing ist eine Einwegfunktion: der gespeicherte Hash wird nie zurueck in ein
+        // Passwort verwandelt, stattdessen wird die Eingabe erneut gehasht und verglichen.
         return hashPassword(password).equals(hashedPassword);
     }
 }

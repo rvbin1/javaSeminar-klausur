@@ -1,5 +1,7 @@
 package enums;
 
+// Reine Konstanten-/Utility-Klasse - der private Konstruktor verhindert absichtlich,
+// dass jemand versehentlich eine Instanz davon erzeugt.
 public class AppConstants {
 
     private AppConstants() {
