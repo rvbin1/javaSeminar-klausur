@@ -1,14 +1,18 @@
 package controllers;
 
+import models.AccountModel;
+import utils.SessionHandler;
 import utils.services.RegisterAccountService;
 import views.MainFrameView;
 import views.login.RegistrationPanelView;
 
 public class RegistrationController {
     private final MainFrameView mainFrameView;
+    private final ChatPanelController chatPanelController;
 
-    public RegistrationController(MainFrameView mainFrameView) {
+    public RegistrationController(MainFrameView mainFrameView, ChatPanelController chatPanelController) {
         this.mainFrameView = mainFrameView;
+        this.chatPanelController = chatPanelController;
 
         getMainFrameView().getRegistrationPanelView().getRegisterButton()
                 .addActionListener(e -> {
@@ -37,7 +41,11 @@ public class RegistrationController {
                         return;
                     }
 
-                    RegisterAccountService.createAccount(userName, password);
+                    AccountModel account = RegisterAccountService.createAccount(userName, password);
+
+                    SessionHandler.getInstance().setCurrentAccount(account);
+                    chatPanelController.loadContacts();
+                    getMainFrameView().showMainChatView();
                 });
 
         getMainFrameView().getRegistrationPanelView().getCancelButton()
