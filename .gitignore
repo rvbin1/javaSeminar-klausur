@@ -27,7 +27,7 @@ bin/
 .vscode/
 
 .idea
-deps
+
 out
 *.json
 java-klausur.iml
