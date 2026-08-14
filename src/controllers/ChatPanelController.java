@@ -4,7 +4,7 @@ import models.AccountModel;
 import models.ChatMessageModel;
 import models.ChatModel;
 import utils.services.ChatService;
-import utils.SessionServiceSingelton;
+import utils.SessionHandler;
 import utils.services.UserService;
 import views.MainFrameView;
 import views.chat.ChatPanelView;
@@ -34,7 +34,7 @@ public class ChatPanelController {
                 return;
             }
 
-            String chatter1 = SessionServiceSingelton.getInstance().getCurrentAccount().getUsername();
+            String chatter1 = SessionHandler.getInstance().getCurrentAccount().getUsername();
             String chatter2 = sidePanel.getSearchField().getText();
 
             ChatService.createChat(UserService.getAccountByUserName(chatter1),
@@ -83,7 +83,7 @@ public class ChatPanelController {
     }
 
     private void loadMessages(String partnerUsername) {
-        String me = SessionServiceSingelton.getInstance().getCurrentAccount().getUsername();
+        String me = SessionHandler.getInstance().getCurrentAccount().getUsername();
         ChatModel chat = ChatService.findChat(
                 UserService.getAccountByUserName(me),
                 UserService.getAccountByUserName(partnerUsername));
@@ -104,7 +104,7 @@ public class ChatPanelController {
             String text = chatPanel.getMessageField().getText().trim();
             if (text.isEmpty()) return;
 
-            String me = SessionServiceSingelton.getInstance().getCurrentAccount().getUsername();
+            String me = SessionHandler.getInstance().getCurrentAccount().getUsername();
             AccountModel sender = UserService.getAccountByUserName(me);
             AccountModel receiver = UserService.getAccountByUserName(currentPartner);
 
@@ -122,7 +122,7 @@ public class ChatPanelController {
         // Die Kontaktliste wird aus den vorhandenen Chats des eingeloggten Nutzers aufgebaut.
         sidePanel.getContactListModel().clear();
 
-        String me = SessionServiceSingelton.getInstance().getCurrentAccount().getUsername();
+        String me = SessionHandler.getInstance().getCurrentAccount().getUsername();
         AccountModel myAccount = UserService.getAccountByUserName(me);
 
         List<ChatModel> chats = ChatService.getChatsForUser(myAccount);

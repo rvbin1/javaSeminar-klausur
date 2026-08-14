@@ -1,15 +1,39 @@
 package utils.services;
 
+import enums.LoginStatus;
 import models.AccountModel;
 
 public class LoginAccountService {
 
-    public static AccountModel checkLogin(String userName, String password)
-    {
-        if (UserService.getAccountByUserName(userName) == null) return null;
+    public static class LoginResult {
+        private final LoginStatus status;
+        private final AccountModel account;
 
-        if (!UserService.getAccountByUserName(userName).verifyPassword(password)) return null;
+        public LoginResult(LoginStatus status, AccountModel account) {
+            this.status = status;
+            this.account = account;
+        }
 
-        return UserService.getAccountByUserName(userName);
+        public LoginStatus getStatus() {
+            return status;
+        }
+
+        public AccountModel getAccount() {
+            return account;
+        }
+    }
+
+    public static LoginResult checkLogin(String userName, String password) {
+        AccountModel account = UserService.getAccountByUserName(userName);
+
+        if (account == null) {
+            return new LoginResult(LoginStatus.USER_NOT_FOUND, null);
+        }
+
+        if (!account.verifyPassword(password)) {
+            return new LoginResult(LoginStatus.WRONG_PASSWORD, null);
+        }
+
+        return new LoginResult(LoginStatus.SUCCESS, account);
     }
 }

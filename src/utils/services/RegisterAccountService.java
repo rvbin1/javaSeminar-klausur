@@ -9,8 +9,19 @@ import java.util.ArrayList;
 
 public class RegisterAccountService {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final int MIN_PASSWORD_LENGTH = 5;
 
-    public void createAccount(String userName, String password) {
+    public static boolean isUsernameTaken(String userName) {
+        ArrayList<AccountModel> accounts = ParseAccountService.parseAllAccounts();
+        return accounts.stream()
+                .anyMatch(account -> account.getUsername().equalsIgnoreCase(userName));
+    }
+
+    public static boolean isPasswordTooShort(String password) {
+        return password == null || password.length() < MIN_PASSWORD_LENGTH;
+    }
+
+    public static void createAccount(String userName, String password) {
         AccountModel account = new AccountModel(userName, password);
 
         ArrayList<AccountModel> accounts = ParseAccountService.parseAllAccounts();
@@ -19,6 +30,4 @@ public class RegisterAccountService {
         String json = GSON.toJson(accounts);
         FileHandlerService.writeFile(AppConstants.ACCOUNT_FILE, json);
     }
-
-
 }

@@ -5,23 +5,48 @@ import views.MainFrameView;
 import views.login.RegistrationPanelView;
 
 public class RegistrationController {
-    private MainFrameView mainFrameView;
-    private RegisterAccountService ras = new RegisterAccountService();
+    private final MainFrameView mainFrameView;
 
     public RegistrationController(MainFrameView mainFrameView) {
         this.mainFrameView = mainFrameView;
 
-        this.mainFrameView.getRegistrationPanelView().getRegisterButton()
+        getMainFrameView().getRegistrationPanelView().getRegisterButton()
                 .addActionListener(e -> {
-                    RegistrationPanelView rgv = this.mainFrameView.getRegistrationPanelView();
+                    RegistrationPanelView rgv = getMainFrameView().getRegistrationPanelView();
 
-                    ras.createAccount(rgv.getUsernameField().getText(),
-                            new String(rgv.getPasswordField().getPassword()));
+                    String userName = rgv.getUsernameField().getText();
+                    String password = new String(rgv.getPasswordField().getPassword());
+
+                    if (RegisterAccountService.isUsernameTaken(userName)) {
+                        javax.swing.JOptionPane.showMessageDialog(
+                                getMainFrameView(),
+                                "Der Benutzername \"" + userName + "\" ist bereits vergeben.",
+                                "Fehler",
+                                javax.swing.JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+
+                    if (RegisterAccountService.isPasswordTooShort(password)) {
+                        javax.swing.JOptionPane.showMessageDialog(
+                                getMainFrameView(),
+                                "Das Passwort muss mindestens 5 Zeichen lang sein.",
+                                "Fehler",
+                                javax.swing.JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+
+                    RegisterAccountService.createAccount(userName, password);
                 });
 
-        this.mainFrameView.getRegistrationPanelView().getCancelButton()
+        getMainFrameView().getRegistrationPanelView().getCancelButton()
                 .addActionListener(e -> {
-                    this.mainFrameView.showLoginPanelView();
+                    getMainFrameView().showLoginPanelView();
                 });
+    }
+
+    public MainFrameView getMainFrameView() {
+        return this.mainFrameView;
     }
 }

@@ -2,15 +2,15 @@ package utils;
 
 import models.AccountModel;
 
-public class SessionServiceSingelton {
-    private static SessionServiceSingelton instance;
+public class SessionHandler {
+    private static SessionHandler instance;
     private AccountModel currentAccount;
 
-    private SessionServiceSingelton() {}
+    private SessionHandler() {}
 
-    public static SessionServiceSingelton getInstance() {
+    public static SessionHandler getInstance() {
         if (instance == null) {
-            instance = new SessionServiceSingelton();
+            instance = new SessionHandler();
         }
         return instance;
     }

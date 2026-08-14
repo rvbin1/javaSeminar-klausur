@@ -1,34 +1,62 @@
 package controllers;
 
+import enums.LoginStatus;
 import models.AccountModel;
 import utils.services.LoginAccountService;
-import utils.SessionServiceSingelton;
+import utils.services.LoginAccountService.LoginResult;
+import utils.SessionHandler;
 import views.MainFrameView;
 
 public class LoginController {
-    private MainFrameView mainFrameView;
+    private final MainFrameView mainFrameView;
 
     public LoginController(MainFrameView mainFrameView, ChatPanelController chatPanelController) {
         this.mainFrameView = mainFrameView;
 
-        this.mainFrameView.getLoginPanelView().getRegisterButton()
+        getMainFrameView().getLoginPanelView().getRegisterButton()
                 .addActionListener(e -> {
-                    this.mainFrameView.showRegisterPanelView();
+                    getMainFrameView().showRegisterPanelView();
                 });
 
-        this.mainFrameView.getLoginPanelView().getLoginButton()
+        getMainFrameView().getLoginPanelView().getLoginButton()
                 .addActionListener(e -> {
-                    char[] passwordChars = this.mainFrameView.getLoginPanelView().getPasswordField().getPassword();
+                    char[] passwordChars = getMainFrameView().getLoginPanelView().getPasswordField().getPassword();
 
-                    AccountModel account = LoginAccountService.checkLogin(
-                            this.mainFrameView.getLoginPanelView().getUsernameField().getText(),
-                            new String(passwordChars));
+                    String userName = getMainFrameView().getLoginPanelView().getUsernameField().getText();
+                    String password = new String(passwordChars);
 
-                    if (account != null) {
-                        SessionServiceSingelton.getInstance().setCurrentAccount(account);
-                        chatPanelController.loadContacts();
-                        this.mainFrameView.showMainChatView();
+                    LoginResult result = LoginAccountService.checkLogin(userName, password);
+
+                    if (result.getStatus() == LoginStatus.USER_NOT_FOUND) {
+                        javax.swing.JOptionPane.showMessageDialog(
+                                getMainFrameView(),
+                                "Der Benutzername \"" + userName + "\" existiert nicht.",
+                                "Fehler",
+                                javax.swing.JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
                     }
+
+                    if (result.getStatus() == LoginStatus.WRONG_PASSWORD) {
+                        javax.swing.JOptionPane.showMessageDialog(
+                                getMainFrameView(),
+                                "Das Passwort ist falsch.",
+                                "Fehler",
+                                javax.swing.JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+
+                    AccountModel account = result.getAccount();
+                    SessionHandler.getInstance().setCurrentAccount(account);
+                    chatPanelController.loadContacts();
+                    getMainFrameView().showMainChatView();
                 });
     }
+
+    public MainFrameView getMainFrameView() {
+        return mainFrameView;
+    }
+
+
 }
